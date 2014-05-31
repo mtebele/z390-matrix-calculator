@@ -1,0 +1,798 @@
+INICIO	SUBENTRY	BASES=(3,4)
+		BAL		12,INTRO
+		BAL		12,CARGA
+		BAL		12,MENU
+SALIR	SUBEXIT		
+
+*******************
+*  	   INTRO      *
+*******************
+
+INTRO	WTO		' '
+		WTO		'*****************************************************'
+		WTO		'*                                                   *'
+		WTO		'*             - FACULTAD DE INGENIERIA -            *'
+		WTO		'*             UNIVERSIDAD DE BUENOS AIRES           *'
+		WTO		'*---------------------------------------------------*'
+		WTO		'*                                                   *'
+		WTO		'*          PROGRAMA DE MANEJO DE MATRICES           *'
+		WTO		'*                                                   *'
+		WTO		'*               AUTOR: MATIAS TEBELE                *' 
+		WTO		'*                                                   *'
+		WTO		'*                  PADRON: 95372                    *'
+		WTO		'*                                                   *'
+		WTO		'*****************************************************'
+		WTO		' '
+		BR		12		
+		
+*************************
+*  INGRESO DE MATRICES  *
+*************************	
+CARGA	WTO		' '
+		WTO		'*-------------------------------*'
+		WTO		'*         CARGA INICIAL         *'
+		WTO		'*-------------------------------*'
+		WTO		' '
+CARVAL	WTOR	'INGRESE CANTIDAD DE MATRICES (1 - 5): ',CANTMAT,,WAITECB
+		WAIT	ECB=WAITECB
+		PACK	CANTMATPK,CANTMAT
+		CP		CANTMATPK,MINMAT
+		BL		CARVAL
+		CP		CANTMATPK,MAXMAT
+		BH		CARVAL		
+		ZAP		DOBLE,CANTMATPK
+		CVB		11,DOBLE				;CANTIDAD DE MATRICES
+		LA		5,CONT					;CONTADOR DE MATRICES
+		
+NUEMAT1	CLC		0(1,5),=C'1'
+		BNE		NUEMAT2
+		LA		6,MAT1
+		WTO		' '
+		WTO		'*-------------------------------*'
+		WTO		'*      CARGA DE MATRIZ: 1       *'
+		WTO		'*-------------------------------*'
+		WTO		' '
+		B		INGFILA
+NUEMAT2	CLC		0(1,5),=C'2'
+		BNE		NUEMAT3
+		LA		6,MAT2
+		WTO		' '
+		WTO		'*-------------------------------*'
+		WTO		'*      CARGA DE MATRIZ: 2       *'
+		WTO		'*-------------------------------*'
+		WTO		' '
+		B		INGFILA
+NUEMAT3	CLC		0(1,5),=C'3'
+		BNE		NUEMAT4
+		LA		6,MAT3
+		WTO		' '
+		WTO		'*-------------------------------*'
+		WTO		'*      CARGA DE MATRIZ: 3       *'
+		WTO		'*-------------------------------*'
+		WTO		' '
+		B		INGFILA
+NUEMAT4	CLC		0(1,5),=C'4'
+		BNE		NUEMAT5
+		LA		6,MAT4
+		WTO		' '
+		WTO		'*-------------------------------*'
+		WTO		'*      CARGA DE MATRIZ: 4       *'
+		WTO		'*-------------------------------*'
+		WTO		' '
+		B		INGFILA
+NUEMAT5	CLC		0(1,5),=C'5'
+		BNE		ERR
+		LA		6,MAT5
+		WTO		' '
+		WTO		'*-------------------------------*'
+		WTO		'*      CARGA DE MATRIZ: 5       *'
+		WTO		'*-------------------------------*'
+		WTO		' '
+		B		INGFILA		
+ERR		WTO		'******** ERROR ********'
+
+INGFILA	WTOR	'INGRESE CANTIDAD DE FILAS (1 - 8): ',FILA,,WAITECB
+		WAIT	ECB=WAITECB
+		PACK	FILAPK,FILA
+		CP		FILAPK,MINFIL
+		BL		INGFILA
+		CP		FILAPK,MAXFIL
+		BH		INGFILA		
+		MVC		0(2,6),FILAPK			;GUARDO LA FILA EN LA MATRIZ
+		ZAP		DOBLE,FILAPK
+		CVB		9,DOBLE
+		
+INGCOL	WTOR	'INGRESE CANTIDAD DE COLUMNAS (1 - 8): ',COL,,WAITECB
+		WAIT	ECB=WAITECB
+		PACK	COLPK,COL
+		CP		COLPK,MINFIL
+		BL		INGCOL
+		CP		COLPK,MAXFIL
+		BH		INGCOL		
+		MVC		2(2,6),COLPK			;GUARDO LA COL EN LA MATRIZ
+		ZAP		DOBLE,COLPK
+		CVB		7,DOBLE
+		MR		8,7		
+
+LLENA	WTOR	'INGRESE VALOR (000 - 099): ',NUM,,WAITECB
+		WAIT	ECB=WAITECB
+		PACK	NUMPK,NUM
+		CP		NUMPK,MINVAL
+		BL		LLENA
+		CP		NUMPK,MAXVAL
+		BH		LLENA
+		MVC		4(2,6),NUMPK			;GUARDO EL VALOR EN LA MATRIZ		
+		LA		6,2(6)					;PUNTERO DE CELDAS++
+		BCT		9,LLENA					;CONTADOR DE CELDAS
+		LA		5,1(5)					;CONTADOR DE MATRICES++
+		BCT		11,NUEMAT1		
+		BR		12	
+		
+***************
+*    MENU	  *
+***************
+		
+MENU	WTO		'*****************************************************'
+		WTO		'*                MENU DE OPERACIONES                *'
+		WTO		'*---------------------------------------------------*'
+		WTO		'*                                                   *'
+		WTO		'*           1 - SUMA DE MATRICES                    *'
+		WTO		'*           2 - RESTA DE MATRICES                   *'
+		WTO		'*           3 - PRODUCTO DE MATRICES                *'
+		WTO		'*           4 - IGUALDAD DE MATRICES                *'
+		WTO		'*           5 - TRASPUESTA DE MATRIZ                *'
+		WTO		'*           6 - PRODUCTO DE MATRIZ POR ESCALAR      *'
+		WTO		'*           7 - MODIFICAR ELEMENTO DE MATRIZ        *'
+		WTO		'*           8 - CONSULTAR ELEMENTO DE MATRIZ        *'
+		WTO		'*           0 - SALIR                               *'
+		WTO		'*                                                   *'
+		WTO		'*****************************************************'
+		WTOR	'',OPC,,WAITECB
+		WAIT	ECB=WAITECB
+		CLI		OPC,C'0'
+		BE		SALIR
+		CLI		OPC,C'1'
+		BE		SUMAR
+		CLI		OPC,C'2'
+		BE		RESTAR
+		CLI		OPC,C'3'
+		BE		MULTI
+		CLI		OPC,C'4'
+		BE		IGUAL
+		CLI		OPC,C'5'
+		BE		TRASP
+		CLI		OPC,C'6'
+		BE		ESCAL
+		CLI		OPC,C'7'
+		BE		MODIF
+		CLI		OPC,C'8'
+		BE		CONSUL
+		B		MENU
+		
+******************************
+*   	 OPERACIONES		 *
+******************************
+
+***************
+*    SUMA     *
+***************
+
+SUMAR	BAL		12,INGMAT2	
+		LA		7,MATRES				;CARGO MATRIZ DE RESULTADOS EN R7
+		
+		ICM		11,12,0(6)				;COPIO FILA EN R4
+		STCM	11,12,FILAPK
+		MVC		0(2,7),FILAPK			;GUARDO FILA EN MATRES
+		ZAP		DOBLE,FILAPK
+		CVB		9,DOBLE
+		
+		ICM		5,12,2(6)				;COPIO COL EN R5
+		STCM	5,12,COLPK
+		MVC		2(2,7),COLPK			;GUARDO COL EN MATRES
+		ZAP		DOBLE,COLPK
+		CVB		10,DOBLE
+		
+		MR		8,10
+		
+SUMA	ICM		5,12,4(6)				;CARGO EL VALOR DE LA MATRIZ EN R5
+		STCM	5,12,NUM1
+		ICM		11,12,4(7)				;CARGO EL VALOR DE LA MATRES EN R10
+		STCM	11,12,NUM2	
+		
+		ZAP		NUMPK,NUM1
+		AP		NUMPK,NUM2			
+		
+		MVC		4(2,7),NUMPK				;GUARDO SUMA EN MATRES		
+		
+		LA		6,2(6)
+		LA		7,2(7)		
+		BCT		9,SUMA
+		B		SUMAR
+	
+***************
+*    RESTA    *
+***************
+
+RESTAR	LA		5,CONT	
+RESWTO	BAL		12,INGMAT2	
+		LA		7,MATRES				;CARGO MATRIZ DE RESULTADOS EN R7
+		
+		ICM		11,12,0(6)				;COPIO FILA EN R11
+		STCM	11,12,FILAPK
+		MVC		0(2,7),FILAPK			;GUARDO FILA EN MATRES
+		ZAP		DOBLE,FILAPK
+		CVB		9,DOBLE
+		
+		ICM		11,12,2(6)				;COPIO COL EN R5
+		STCM	11,12,COLPK
+		MVC		2(2,7),COLPK			;GUARDO COL EN MATRES
+		ZAP		DOBLE,COLPK
+		CVB		10,DOBLE
+		
+		MR		8,10
+		
+RESTA	ICM		11,12,4(6)				;CARGO EL VALOR DE LA MATRIZ EN R9
+		STCM	11,12,NUM1
+		ICM		11,12,4(7)				;CARGO EL VALOR DE LA MATRES EN R10
+		STCM	11,12,NUM2
+		
+		CLC		0(1,5),=C'1'
+		BNE		RES2
+RES		ZAP		NUMPK,NUM1
+		SP		NUMPK,NUM2
+		B		SIGR
+		
+RES2	ZAP		NUMPK,NUM2
+		SP		NUMPK,NUM1	
+		
+SIGR	MVC		4(2,7),NUMPK			;GUARDO RESTA EN MATRES		
+		LA		6,2(6)
+		LA		7,2(7)		
+		BCT		9,RESTA
+		LA		5,1(5)
+		B		RESWTO
+		
+***************
+*  PRODUCTO   *
+***************
+		
+MULTI	BAL		12,INGMAT3	
+		LA		7,MATRES2				;CARGO MATRIZ DE RESULTADOS EN R7		
+		
+		ICM		11,12,0(6)				;COPIO FILA EN R4
+		STCM	11,12,FILAPK
+		ZAP		NUM3,FILAPK		
+		MVC		0(3,7),NUM3				;GUARDO FILA EN MATRES2		
+		ZAP		DOBLE,FILAPK
+		CVB		9,DOBLE
+		
+		ICM		5,12,2(6)				;COPIO COL EN R5
+		STCM	5,12,COLPK
+		ZAP		NUM4,COLPK		
+		MVC		3(3,7),NUM4				;GUARDO COL EN MATRES2
+		ZAP		DOBLE,COLPK
+		CVB		10,DOBLE
+			
+		MR		8,10
+		
+MULT	ICM		5,12,4(6)				;CARGO EL VALOR DE LA MATRIZ EN R5
+		STCM	5,12,NUM1
+		ICM		11,14,6(7)				;CARGO EL VALOR DE LA MATRES2 EN R11
+		STCM	11,14,NUM3		
+		ZAP		NUM4,NUM1
+		MP		NUM4,NUM3
+		MVC		6(3,7),NUM4				;GUARDO PRODUCTO EN MATRES2		
+		LA		6,2(6)
+		LA		7,3(7)		
+		BCT		9,MULT
+		B		MULTI
+		
+***************
+*  IGUALDAD   *
+***************
+		
+IGUAL	WTOR	'INGRESE MATRIZ 1 (1 - 5): ',MAT,,WAITECB
+		WAIT	ECB=WAITECB
+		PACK	MATPK,MAT
+		CP		MATPK,MINMAT
+		BL		IGUAL
+		CP		MATPK,MAXMAT
+		BH		IGUAL
+		BAL		11,UBIMAT				;CARGO MATRIZ1 EN R6
+IGUAL2	WTOR	'INGRESE MATRIZ 2 (1 - 5): ',MATT,,WAITECB
+		WAIT	ECB=WAITECB
+		PACK	MATTPK,MATT
+		CP		MATTPK,MINMAT
+		BL		IGUAL2
+		CP		MATTPK,MAXMAT
+		BH		IGUAL2		
+		BAL		11,UBIMATT				;CARGO MATRIZ2 EN R7
+
+		ICM		9,12,0(6)				;COPIO FILA DE MAT1 EN R9
+		STCM	9,12,FILAPK
+		ICM		9,12,0(7)				;COPIO FILA DE MAT2 EN R9
+		STCM	9,12,COLPK		
+		CP		FILAPK,COLPK
+		BNE		NOIGU		
+		
+		ZAP		DOBLE,FILAPK
+		CVB		9,DOBLE
+		
+		ICM		10,12,2(6)				;COPIO COL DE MAT1 EN R10
+		STCM	10,12,FILAPK
+		ICM		10,12,2(7)				;COPIO COL DE MAT2 EN R10
+		STCM	10,12,COLPK		
+		CP		FILAPK,COLPK
+		BNE		NOIGU
+		
+		ZAP		DOBLE,COLPK
+		CVB		5,DOBLE		
+		MR		8,5
+		
+OTROI	ICM		5,12,4(6)				;CARGO EL VALOR DE LA MATRIZ1 EN R5
+		STCM	5,12,NUM1
+		ICM		10,12,4(7)				;CARGO EL VALOR DE LA MATRIZ2 EN R10
+		STCM	10,12,NUM2
+		CP		NUM1,NUM2
+		BNE		NOIGU
+		LA		6,2(6)
+		LA		7,2(7)
+		BCT		9,OTROI
+		WTO		' '
+		WTO		'*===============================*'
+		WTO		'*   LAS MATRICES SON IGUALES    *'
+		WTO		'*===============================*'
+		WTO		' '
+		B		MENU
+		
+NOIGU	WTO		' '
+		WTO		'*===============================*'
+		WTO		'*  LAS MATRICES NO SON IGUALES  *'
+		WTO		'*===============================*'
+		WTO		' '	
+		B		MENU
+		
+***************
+*   ESCALAR   *
+***************
+		
+ESCAL	BAL		12,INGMAT
+		LA		7,MATRES2				;CARGO MATRES2 EN R7
+INGESC	WTOR	'INGRESE ESCALAR (000 - 099): ',NUM,,WAITECB
+		WAIT	ECB=WAITECB
+		PACK	NUMPK,NUM
+		CP		NUMPK,MINVAL
+		BL		INGESC
+		CP		NUMPK,MAXVAL
+		BH		INGESC		
+		
+		ICM		9,12,0(6)				;COPIO FILA DE MATRIZ EN R9
+		STCM	9,12,FILAPK		
+		
+		ZAP		NUM3,FILAPK		
+		MVC		0(3,7),NUM3				;GUARDO FILA EN MATRES2
+		ZAP		DOBLE,FILAPK
+		CVB		9,DOBLE
+		
+		ICM		10,12,2(6)				;COPIO COL DE MATRIZ EN R10
+		STCM	10,12,COLPK
+		
+		ZAP		NUM4,COLPK		
+		MVC		3(3,7),NUM4				;GUARDO COL EN MATRES2
+		ZAP		DOBLE,COLPK
+		CVB		10,DOBLE
+		
+		MR		8,10					;R9 = CANTIDAD DE CELDAS
+		ZAP		DOBLE,NUMPK				;COPIO ESCALAR EN R12
+		CVB		8,DOBLE		
+		
+OTROE	ICM		5,12,4(6)				;COPIO VALOR DE MATRIZ EN R5
+		STCM	5,12,NUM1
+		ZAP		DOBLE,NUM1
+		CVB		11,DOBLE	
+		
+		ZAP		NUM3,NUM1
+		MP		NUM3,NUMPK		
+		MVC		6(3,7),NUM3				;GUARDO MULT EN MATRES2		
+		LA		6,2(6)
+		LA		7,3(7)
+		BCT		9,OTROE
+		B		MOSTRAR2
+		
+***************
+*  CONSULTA   *
+***************
+		
+CONSUL	MVC		FLAG,=C'0'				;LE INDICO QUE ES CONSULTA
+		B		CONMOD	
+		
+***************
+*  MODIFICAR  *
+***************	
+	
+MODIF	MVC		FLAG,=C'1'				;LE INDICO QUE ES MODIFICACION
+		B		CONMOD
+
+***************
+* TRASPUESTA  *
+***************	
+		
+TRASP	BAL		12,INGMAT
+		LA		7,MATRES				;CARGO MATRES EN R7
+
+		ICM		11,12,0(6)				;COPIO FILA DE MATRIZ EN R12
+		STCM	11,12,FILAPK
+		ZAP		DOBLE,FILAPK
+		
+		ICM		10,12,2(6)				;COPIO COL DE MATRIZ EN R10
+		STCM	10,12,COLPK
+		ZAP		DOBLE,COLPK
+		CVB		10,DOBLE
+		ST		10,AUXPK				;NUMPK = CANTIDAD DE COLUMNAS
+		
+		LA		9,1						;CONTADOR DE FILAS
+		ST		9,CONTF
+		LA		11,1					;CONTADOR DE COLS
+		ST		11,CONTC
+		
+		MVC		0(2,7),COLPK			;GUARDO LA FILA COMO COL EN MATRES
+		MVC		2(2,7),FILAPK			;GUARDO LA COL COMO FILA EN MATRES
+		
+		ZAP		DOBLE,FILAPK
+		CVB		5,DOBLE					;BRANCH FILAS
+		
+		ZAP		DOBLE,COLPK
+		CVB		12,DOBLE				;BRANCH COLS
+		
+OTROT	S		9,=F'1'					;Y-1
+		M		8,=F'2'					;Y-1 * 2
+		M		8,AUXPK					;Y-1 * 2 * CANTCOL
+		S		11,=F'1'				;X-1
+		M		10,=F'2'				;X-1 * 2
+		AR		9,11					;X-1 * 2 + Y-1 * 2 * CANTCOL
+		AR		9,6						;X-1 * 2 + Y-1 * 2 * CANTCOL + INICIO
+			
+		MVC		4(2,7),4(9)				;INSERTO
+
+		L		9,CONTF
+		A		9,=F'1'
+		ST		9,CONTF					
+		L		11,CONTC				
+		LA		7,2(7)	
+		BCT		5,OTROT
+		
+		ZAP		DOBLE,FILAPK
+		CVB		5,DOBLE		
+		LA		9,1
+		ST		9,CONTF		
+		L		11,CONTC
+		A		11,=F'1'
+		ST		11,CONTC				
+		BCT		12,OTROT		
+
+		B		MOSTRAR	
+
+*************************************
+*  RUTINA DE CONSULTA/MODIFICACION  *
+*************************************
+
+CONMOD	BAL		12,INGMAT
+		BAL		11,UBIMAT				;CARGO MATRIZ EN R6		
+CONFIL	WTOR	'INGRESE FILA (1 - 8): ',FILA,,WAITECB
+		WAIT	ECB=WAITECB
+		PACK	FILAPK,FILA
+		CP		FILAPK,MINFIL
+		BL		CONFIL
+		CP		FILAPK,MAXFIL
+		BH		CONFIL
+CONCOL	WTOR	'INGRESE COLUMNA (1 - 8): ',COL,,WAITECB
+		WAIT	ECB=WAITECB
+		PACK	COLPK,COL
+		CP		COLPK,MINCOL
+		BL		CONCOL
+		CP		COLPK,MAXCOL
+		BH		CONCOL
+		
+		ICM		7,12,2(6)				;COPIO COL DE MATRIZ EN R7
+		STCM	7,12,COL2PK
+		ZAP		DOBLE,COL2PK
+		CVB		7,DOBLE		
+		ZAP		DOBLE,FILAPK			;COPIO FILA INGRESADA EN R9
+		CVB		9,DOBLE		
+		ZAP		DOBLE,COLPK				;COPIO COL INGRESADA EN R11
+		CVB		11,DOBLE
+		
+		S		9,=F'1'					;Y-1
+		M		8,=F'2'					;Y-1 * 2
+		MR		8,7						;Y-1 * 2 * CANTCOL
+		S		11,=F'1'				;X-1
+		M		10,=F'2'				;X-1 * 2
+		AR		9,11					;X-1 * 2 + Y-1 * 2 * CANTCOL
+		AR		9,6						;X-1 * 2 + Y-1 * 2 * CANTCOL + INICIO
+		
+		WTO		' '
+		WTO		'*===============================*'
+		WTO		'*         VALOR ACTUAL          *'
+		WTO		'*===============================*'
+		WTO		' '	
+		MVI		LINEA,C' '
+		MVC		LINEA+1(79),LINEA		;BLANQUEO LA LINEA		
+		LA		5,LINEA
+		UNPK	NUM,4(2,9)
+		MVZ		NUM+2(1),=X'FF'	
+		MVC		0(3,5),NUM
+		WTO		MF=(E,WTOBLOCK)
+		
+		CLI		FLAG,C'0'
+		BE		MENU
+		
+MODV	WTOR	'INGRESE NUEVO VALOR (000 - 099): ',NUM,,WAITECB
+		WAIT	ECB=WAITECB
+		PACK	NUMPK,NUM
+		CP		NUMPK,MINVAL
+		BL		MODV
+		CP		NUMPK,MAXVAL
+		BH		MODV
+		MVC		4(2,9),NUMPK			;GUARDO EL VALOR EN LA MATRIZ
+		
+		WTO		' '
+		WTO		'*===============================*'
+		WTO		'*          NUEVO VALOR          *'
+		WTO		'*===============================*'
+		WTO		' '	
+		MVI		LINEA,C' '
+		MVC		LINEA+1(79),LINEA		;BLANQUEO LA LINEA		
+		LA		5,LINEA
+		UNPK	NUM,4(2,9)
+		MVZ		NUM+2(1),=X'FF'	
+		MVC		0(3,5),NUM
+		WTO		MF=(E,WTOBLOCK)
+		
+		B		MENU		
+
+*************************************
+*   RUTINA DE RESETEO DE MATRICES   *
+*************************************
+	
+RESET	LA		5,66
+		LA		6,MATRES
+		LA		7,MATRES2
+OTRORT	MVC		0(2,6),=P'00'	
+		MVC		0(3,7),=P'0001'
+		LA		6,2(6)
+		LA		7,3(7)
+		BCT		5,OTRORT
+		BR		12
+		
+*************************************
+*  	 RUTINA DE MUESTRA DE MATRIZ    *
+*************************************
+
+MOSTRAR	LA		6,MATRES				;CARGO MATRES EN R6
+
+		ICM		5,12,0(6)				;COPIO FILA EN R5
+		STCM	5,12,FILAPK		
+		ZAP		DOBLE,FILAPK			;CARGO FILA DE MATRIZ EN R9
+		CVB		9,DOBLE
+		
+		ICM		5,12,2(6)				;COPIO COL EN R5
+		STCM	5,12,COLPK		
+		ZAP		DOBLE,COLPK				;CARGO COL DE MATRIZ EN R10
+		CVB		10,DOBLE
+		
+		WTO		' '
+		WTO		'*===============================*'
+		WTO		'*           RESULTADO           *'
+		WTO		'*===============================*'
+		WTO		' '
+		
+OTRAF	MVI		LINEA,C' '
+		MVC		LINEA+1(79),LINEA		;BLANQUEO LA LINEA		
+		LA		5,LINEA
+		MVC		0(1,5),=C'| '
+OTRAC	UNPK	NUM,4(2,6)
+		MVZ		NUM+2(1),=X'FF'	
+		MVC		2(3,5),NUM		
+		CP		4(2,6),=P'00'			;ME FIJO SI ES NEGATIVO
+		BNL		MOSPOS
+		MVC		2(1,5),=C'-'
+MOSPOS	MVC		5(3,5),=C' | '
+		LA		5,6(5)					;AVANZO EN LA LINEA
+		LA		6,2(6)					;AVANZO EN LA MATRIZ
+		BCT		10,OTRAC
+		WTO		MF=(E,WTOBLOCK)
+		ZAP		DOBLE,COLPK				;CARGO COL DE MATRIZ EN R10
+		CVB		10,DOBLE
+		BCT 	9,OTRAF
+		BAL		12,RESET
+		B 		MENU	
+		
+*************************************
+*  RUTINA DE MUESTRA DE MATRIZ (2)  *
+*************************************
+
+MOSTRAR2 LA		6,MATRES2
+		
+		ICM		5,14,0(6)				;COPIO FILA EN R5
+		STCM	5,14,NUM3		
+		ZAP		DOBLE,NUM3				;CARGO FILA DE MATRIZ EN R9
+		CVB		9,DOBLE
+		
+		ICM		5,14,3(6)				;COPIO COL EN R5
+		STCM	5,14,NUM4		
+		ZAP		DOBLE,NUM4				;CARGO COL DE MATRIZ EN R10
+		CVB		10,DOBLE
+		
+		WTO		' '
+		WTO		'*===============================*'
+		WTO		'*           RESULTADO           *'
+		WTO		'*===============================*'
+		WTO		' '
+		
+OTRAF2	MVI		LINEA,C' '
+		MVC		LINEA+1(79),LINEA		;BLANQUEO LA LINEA		
+		LA		5,LINEA	
+		MVC		0(1,5),=C'| '
+OTRAC2	UNPK	NUMC4,6(3,6)
+		MVZ		NUMC4+3(1),=X'FF'		
+		MVC		2(4,5),NUMC4
+		CP		6(3,6),=P'000'			;ME FIJO SI ES NEGATIVO
+		BNL		MOSPOS2
+		MVC		2(1,5),=C'-'
+MOSPOS2	MVC		6(3,5),=C' | '
+		LA		5,7(5)					;AVANZO EN LA LINEA
+		LA		6,3(6)					;AVANZO EN LA MATRIZ
+		BCT		10,OTRAC2
+		WTO		MF=(E,WTOBLOCK)			;BCT 4,OTRAC (ABAJO DEL WTO)
+		ZAP		DOBLE,NUM4				;CARGO COL DE MATRIZ EN R10
+		CVB		10,DOBLE
+		BCT		9,OTRAF2
+		BAL		12,RESET
+		B 		MENU
+		
+*************************************
+*    RUTINA DE INGRESO DE MATRIZ    *
+*************************************		
+		
+INGMAT	WTOR	'INGRESE MATRIZ A OPERAR (1 - 5):',MAT,,WAITECB
+		WAIT	ECB=WAITECB
+		PACK	MATPK,MAT
+		CP		MATPK,MINMAT
+		BL		INGMAT
+		CP		MATPK,MAXMAT
+		BH		INGMAT		
+		BAL		11,UBIMAT				;CARGO MATRIZ EN R6	
+		BR		12
+		
+*************************************
+*  RUTINA DE INGRESO DE MATRIZ (2)  *
+*************************************		
+		
+INGMAT2	WTOR	'INGRESE MATRIZ A OPERAR (1 - 5), 0 TERMINA:',MAT,,WAITECB
+		WAIT	ECB=WAITECB
+		PACK	MATPK,MAT
+		CP		MATPK,=P'0'
+		BE		MOSTRAR
+		CP		MATPK,MINMAT
+		BL		INGMAT2
+		CP		MATPK,MAXMAT
+		BH		INGMAT2		
+		BAL		11,UBIMAT				;CARGO MATRIZ EN R6	
+		BR		12
+		
+*************************************
+*  RUTINA DE INGRESO DE MATRIZ (3)  *
+*************************************		
+		
+INGMAT3	WTOR	'INGRESE MATRIZ A OPERAR (1 - 5), 0 TERMINA:',MAT,,WAITECB
+		WAIT	ECB=WAITECB
+		PACK	MATPK,MAT
+		CP		MATPK,=P'0'
+		BE		MOSTRAR2
+		CP		MATPK,MINMAT
+		BL		INGMAT3
+		CP		MATPK,MAXMAT
+		BH		INGMAT3		
+		BAL		11,UBIMAT				;CARGO MATRIZ EN R6	
+		BR		12
+		
+*************************************
+*   RUTINA DE UBICACION DE MATRIZ 	*
+*************************************	
+		
+UBIMAT	CP		MATPK,=P'1'
+		BE		UBIMAT1
+		CP		MATPK,=P'2'
+		BE		UBIMAT2
+		CP		MATPK,=P'3'
+		BE		UBIMAT3
+		CP		MATPK,=P'4'
+		BE		UBIMAT4
+		CP		MATPK,=P'5'
+		BE		UBIMAT5
+UBIMAT1	LA		6,MAT1
+		BR		11
+UBIMAT2	LA		6,MAT2
+		BR		11
+UBIMAT3	LA		6,MAT3
+		BR		11
+UBIMAT4	LA		6,MAT4
+		BR		11
+UBIMAT5	LA		6,MAT5
+		BR		11
+		
+UBIMATT	CP		MATTPK,=P'1'
+		BE		UBIMATT1
+		CP		MATTPK,=P'2'
+		BE		UBIMATT2
+		CP		MATTPK,=P'3'
+		BE		UBIMATT3
+		CP		MATTPK,=P'4'
+		BE		UBIMATT4
+		CP		MATTPK,=P'5'
+		BE		UBIMATT5
+UBIMATT1 LA		7,MAT1
+		 BR		11
+UBIMATT2 LA		7,MAT2
+		 BR		11
+UBIMATT3 LA		7,MAT3
+		 BR		11
+UBIMATT4 LA		7,MAT4
+		 BR		11
+UBIMATT5 LA		7,MAT5
+		 BR		11		
+		
+		SUBEXIT
+		
+***************************
+*   	VARIABLES	      *
+***************************	
+
+WAITECB	DC		F'0'
+
+MAT1	DC		66PL2'0'
+MAT2	DC		66PL2'0'
+MAT3	DC		66PL2'0'
+MAT4	DC		66PL2'0'
+MAT5	DC		66PL2'0'
+MATRES	DC		66PL2'0'
+MATRES2	DC		66PL3'1'
+MAT		DS		C
+MATT	DS		C
+MATPK	DS		P
+MATTPK	DS		P
+CANTMAT	DS		C
+CANTMATPK DS	P
+FILA	DS		C
+FILAPK	DS		P
+FILA2PK	DS		P
+COL		DS		C
+COLPK	DS		P
+COL2PK	DS		P
+AUXPK	DS		P
+CONTF	DS		D
+CONTC	DS		D
+NUM		DS		CL3
+NUMPK	DS		PL2
+NUM1	DS		PL2
+NUM2	DS		PL2
+NUM3	DS		PL3
+NUM4	DS		PL3
+NUMC4	DS		CL4
+MINVAL	DC		PL2'000'
+MAXVAL	DC		PL2'099'
+MINFIL	DC		P'01'
+MAXFIL	DC		P'08'
+MINCOL	DC		P'01'
+MAXCOL	DC		P'08'
+MINMAT	DC		P'1'
+MAXMAT	DC		P'5'
+DOBLE	DS		D
+OPC		DS		C
+CONT	DC		CL5'12345'
+FLAG	DS		C
+WTOBLOCK DC		H'84'
+		DC		H'0'
+LINEA	DS		CL80
+
+		END
